@@ -31,7 +31,7 @@ public class Tree<E extends Comparable<E>>
             boolean done = false;
             
                 while(!done){
-                    if (cursor.getData().compareTo(cursor.getData()) > 0){
+                    if (element.compareTo(cursor.getData()) <= 0){//cursor.getData().compareTo(element) > 0){
                         if (cursor.getLeft() == null) {
                             cursor.setLeft(new BTNode<E>(element,null,null));
                             done = true;
@@ -40,7 +40,7 @@ public class Tree<E extends Comparable<E>>
                     } //end left is null if-else
                 }else{
                     if(cursor.getRight() == null){
-                        cursor.setRight(new BTNode(element, cursor, null));
+                        cursor.setRight(new BTNode(element, null, null));
                         done = true;
                     }else{
                         cursor = cursor.getRight();
@@ -63,7 +63,7 @@ public class Tree<E extends Comparable<E>>
     /**
      * Print the tree in order
      */
-    public void inOrderPrint()
+    public void printTree()
     {
         if (root == null){
             System.out.println("This tree is empty");
@@ -71,4 +71,41 @@ public class Tree<E extends Comparable<E>>
             root.inOrderPrint();
         }//end if-else
     }//end inOrderPrint
+    
+    public boolean remove(E target)
+    {
+        BTNode<E> cursor = root;
+        BTNode<E> parentOfCursor = null;
+        boolean found = false;
+        
+        while (cursor != null && !found){
+            if (target.equals(cursor.getData())){
+                found = true;
+            }else{
+                if(target.compareTo(cursor.getData()) <= 0){
+                    parentOfCursor = cursor;
+                    cursor = cursor.getLeft();
+                }else{
+                    parentOfCursor = cursor;
+                    cursor = cursor.getRight();
+                }//end target.compareTo if-else
+            }//end target.equals if-else
+        }//end cursor && found while
+        
+        if (cursor != null){
+            if (cursor.getLeft() == null && cursor == root){
+                root = root.getRight();
+            } else if (cursor.getLeft() == null && cursor!= root){
+                if (cursor == parentOfCursor.getLeft()){
+                    parentOfCursor.setLeft(cursor.getRight());
+                } else {
+                    parentOfCursor.setRight(cursor.getRight());
+                }//end cursor ==parentOfCursor.setLEft if-else
+            } else{
+                cursor.setData(cursor.getLeft().getRightMostData());
+                cursor.setLeft(cursor.getLeft().removeRightmost());
+            } //end cursor == root if-else
+        }//end found if
+        return found;
+    }
 }//end Tree
